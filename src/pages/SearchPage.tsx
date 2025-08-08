@@ -23,8 +23,8 @@ const SearchPage: React.FC = () => {
 
   // Get unique values for filter dropdowns
   const uniqueValues = useMemo(() => ({
-    towers: Array.from(new Set(mockComponents.map(c => c.towerName))),
-    appGroups: Array.from(new Set(mockComponents.map(c => c.appGroup))),
+    towers: Array.from(new Set(components.map((c: any) => c.tower || 'Unknown'))),
+    appGroups: Array.from(new Set(components.map((c: any) => c.name || 'Unknown'))),
     complexities: ['Simple', 'Medium', 'Complex'] as const,
     statuses: ['Released', 'In Development', 'Planned'] as const
   }), []);
@@ -38,7 +38,7 @@ const SearchPage: React.FC = () => {
 
   // Filter components based on search and filters
   const filteredComponents = useMemo(() => {
-    return mockComponents.filter(component => {
+    return components.filter((component: any) => {
       // Text search with year and month support
       const searchLower = searchQuery.toLowerCase();
       let matchesSearch = !searchQuery;
@@ -389,10 +389,11 @@ const SearchPage: React.FC = () => {
             className="btn btn-secondary"
             onClick={() => {
               const csvContent = [
-                'ID,Tower,App Group,Component,Complexity,Status,Year,Month,Description',
-                ...filteredComponents.map(c => 
-                  `${c.id},"${c.towerName}","${c.appGroup}","${c.componentType}",${c.complexity},${c.status},${c.year},${c.month},"${c.description || ''}"`
-                )
+                'ID,Tower,Component Name,Description,Complexity,Status,Owner,Release Date',
+                ...filteredComponents.map((c: any) => {
+                  const releaseDate = c.releaseDate ? new Date(c.releaseDate).toLocaleDateString() : '';
+                  return `${c.id || ''},"${c.tower || ''}","${c.name || ''}","${c.description || ''}",${c.complexity || ''},${c.status || ''},"${c.owner || ''}","${releaseDate}"`;
+                })
               ].join('\n');
               
               const blob = new Blob([csvContent], { type: 'text/csv' });
@@ -443,10 +444,10 @@ const SearchPage: React.FC = () => {
                 }}>
                   <div>
                     <h4 style={{ fontWeight: '600', marginBottom: '4px' }}>
-                      {component.componentType}
+                      {(component as any).name || 'Unknown Component'}
                     </h4>
                     <p style={{ fontSize: '14px', color: colors.textSecondary }}>
-                      {component.towerName} • {component.appGroup}
+                      {(component as any).tower || 'Unknown Tower'} • {(component as any).owner || 'Unassigned'}
                     </p>
                   </div>
                   <Eye size={16} color={colors.textSecondary} />
@@ -490,7 +491,7 @@ const SearchPage: React.FC = () => {
                   </div>
                   
                   <span style={{ fontSize: '12px', color: colors.textSecondary }}>
-                    {new Date(0, component.month - 1).toLocaleString('default', { month: 'short' })} {component.year}
+                    {(component as any).releaseDate ? new Date((component as any).releaseDate).toLocaleDateString() : 'No Release Date'}
                   </span>
                 </div>
               </motion.div>
@@ -537,7 +538,7 @@ const SearchPage: React.FC = () => {
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '24px' }}>
                 <h2 style={{ fontSize: '1.5rem', fontWeight: '700' }}>
-                  {selectedComponent.componentType}
+                  {(selectedComponent as any).name || 'Unknown Component'}
                 </h2>
                 <button
                   className="btn btn-ghost"
@@ -550,10 +551,15 @@ const SearchPage: React.FC = () => {
 
               <div style={{ display: 'grid', gap: '16px', marginBottom: '24px' }}>
                 <div>
-                  <label style={{ fontSize: '14px', fontWeight: '600', color: colors.textSecondary }}>
-                    Tower & App Group
+                  <label style={{ 
+                    fontSize: '12px', 
+                    fontWeight: '600', 
+                    color: colors.textSecondary,
+                    textTransform: 'uppercase' 
+                  }}>
+                    Tower & Owner
                   </label>
-                  <p>{selectedComponent.towerName} • {selectedComponent.appGroup}</p>
+                  <p>{(selectedComponent as any).tower || 'Unknown Tower'} • {(selectedComponent as any).owner || 'Unassigned'}</p>
                 </div>
 
                 <div>
@@ -584,18 +590,28 @@ const SearchPage: React.FC = () => {
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                   <div>
-                    <label style={{ fontSize: '14px', fontWeight: '600', color: colors.textSecondary }}>
+                    <label style={{ 
+                      fontSize: '12px', 
+                      fontWeight: '600', 
+                      color: colors.textSecondary,
+                      textTransform: 'uppercase' 
+                    }}>
                       Release Date
                     </label>
                     <p>
-                      {new Date(0, selectedComponent.month - 1).toLocaleString('default', { month: 'long' })} {selectedComponent.year}
+                      {(selectedComponent as any).releaseDate ? new Date((selectedComponent as any).releaseDate).toLocaleDateString() : 'No Release Date'}
                     </p>
                   </div>
                   <div>
-                    <label style={{ fontSize: '14px', fontWeight: '600', color: colors.textSecondary }}>
-                      Change Type
+                    <label style={{ 
+                      fontSize: '12px', 
+                      fontWeight: '600', 
+                      color: colors.textSecondary,
+                      textTransform: 'uppercase' 
+                    }}>
+                      Status
                     </label>
-                    <p>{selectedComponent.changeType}</p>
+                    <p>{selectedComponent.status || 'Unknown Status'}</p>
                   </div>
                 </div>
               </div>

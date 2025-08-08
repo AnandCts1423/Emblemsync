@@ -53,7 +53,7 @@ const ViewAllPage: React.FC = () => {
   const { components, loading, error, refreshData, addComponent, updateComponent, deleteComponent, uploadFile, exportData } = useData();
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-  const [sortField, setSortField] = useState<keyof Component>('updatedAt');
+  const [sortField, setSortField] = useState<keyof Component>('name');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
   const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
   
@@ -493,7 +493,7 @@ const ViewAllPage: React.FC = () => {
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <Database size={20} color={colors.primary} />
           <span style={{ fontSize: '16px', fontWeight: '600' }}>
-            {localComponents.length} Total Components
+            {components.length} Total Components
           </span>
           {selectedRows.size > 0 && (
             <span style={{ 

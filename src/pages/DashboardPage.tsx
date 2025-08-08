@@ -28,32 +28,34 @@ const DashboardPage: React.FC = () => {
   }, []);
 
   // Process component data for charts
-  const processedData = React.useMemo(() => {
-    if (!components.length || !analyticsData) return null;
-    
-    const towerMap = new Map<string, { total: number; released: number; inDevelopment: number; planned: number }>();
+  const towerSummaries = React.useMemo(() => {
+    const towerMap = new Map<string, { total: number; released: number; inDevelopment: number; planned: number }>(); 
     
     components.forEach(component => {
-      const tower = component.towerName;
+      const tower = component.tower || 'Unknown';
       if (!towerMap.has(tower)) {
         towerMap.set(tower, { total: 0, released: 0, inDevelopment: 0, planned: 0 });
       }
       
-      const summary = towerMap.get(tower)!;
-      summary[component.complexity.toLowerCase() as keyof typeof summary]++;
+      const counts = towerMap.get(tower)!;
+      counts.total++;
+      if (component.status === 'Deployed') counts.released++;
+      if (component.status === 'In Development') counts.inDevelopment++;
+      if (component.status === 'Planned') counts.planned++;
     });
 
     return Array.from(towerMap.entries()).map(([towerName, counts]) => ({
       towerName,
-      ...counts,
-      total: counts.simple + counts.medium + counts.complex
+      ...counts
     }));
-  }, []);
+  }, [components]);
 
   const complexityData = React.useMemo(() => {
     const counts = { Simple: 0, Medium: 0, Complex: 0 };
-    mockComponents.forEach(component => {
-      counts[component.complexity]++;
+    components.forEach(component => {
+      if (component.complexity && counts[component.complexity as keyof typeof counts] !== undefined) {
+        counts[component.complexity as keyof typeof counts]++;
+      }
     });
     
     return [
@@ -67,9 +69,13 @@ const DashboardPage: React.FC = () => {
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     const releasesByMonth = new Map<number, number>();
     
-    mockComponents.forEach(component => {
-      const count = releasesByMonth.get(component.month) || 0;
-      releasesByMonth.set(component.month, count + 1);
+    components.forEach(component => {
+      if (component.releaseDate) {
+        const releaseDate = new Date(component.releaseDate);
+        const month = releaseDate.getMonth() + 1;
+        const count = releasesByMonth.get(month) || 0;
+        releasesByMonth.set(month, count + 1);
+      }
     });
 
     return months.map((month, index) => ({
@@ -120,7 +126,7 @@ const DashboardPage: React.FC = () => {
             onClick={() => {
               const dashboardData = {
                 summary: {
-                  totalComponents: mockComponents.length,
+                  totalComponents: components.length,
                   totalTowers: towerSummaries.length,
                   complexityBreakdown: complexityData,
                   releaseTimeline: releaseData
@@ -185,21 +191,21 @@ const DashboardPage: React.FC = () => {
               <div style={{ display: 'flex', gap: '12px' }}>
                 <div style={{ flex: 1, textAlign: 'center' }}>
                   <div style={{ fontSize: '1.2rem', fontWeight: '600', color: colors.success }}>
-                    {tower.simple}
+                    {tower.released}
                   </div>
-                  <div style={{ fontSize: '12px', color: colors.textSecondary }}>Simple</div>
+                  <div style={{ fontSize: '12px', color: colors.textSecondary }}>Released</div>
                 </div>
                 <div style={{ flex: 1, textAlign: 'center' }}>
                   <div style={{ fontSize: '1.2rem', fontWeight: '600', color: colors.warning }}>
-                    {tower.medium}
+                    {tower.inDevelopment}
                   </div>
-                  <div style={{ fontSize: '12px', color: colors.textSecondary }}>Medium</div>
+                  <div style={{ fontSize: '12px', color: colors.textSecondary }}>In Development</div>
                 </div>
                 <div style={{ flex: 1, textAlign: 'center' }}>
-                  <div style={{ fontSize: '1.2rem', fontWeight: '600', color: colors.error }}>
-                    {tower.complex}
+                  <div style={{ fontSize: '1.2rem', fontWeight: '600', color: colors.primary }}>
+                    {tower.planned}
                   </div>
-                  <div style={{ fontSize: '12px', color: colors.textSecondary }}>Complex</div>
+                  <div style={{ fontSize: '12px', color: colors.textSecondary }}>Planned</div>
                 </div>
               </div>
             </motion.div>

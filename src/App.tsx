@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ThemeProvider } from './context/ThemeContext';
 import { DataProvider } from './context/DataContext';
 import Layout from './components/Layout/Layout';
-import HomePageSimple from './pages/HomePageSimple';
+import HomePage from './pages/HomePage';
 import UploadPage from './pages/UploadPage';
 import DashboardPage from './pages/DashboardPage';
 import SearchPage from './pages/SearchPage';
@@ -29,7 +29,7 @@ const App: React.FC = () => {
               transition={{ duration: 0.3 }}
             >
               <Routes>
-                <Route path="/" element={<HomePageSimple />} />
+                <Route path="/" element={<HomePage />} />
                 <Route path="/upload" element={<UploadPage />} />
                 <Route path="/dashboard" element={<DashboardPage />} />
                 <Route path="/search" element={<SearchPage />} />
