@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400" height="80" viewBox="0 0 400 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- EmblemHealth Logo -->
+  <g>
+    <!-- Purple leaf/wing -->
+    <path d="M5 20 C5 10, 10 5, 20 5 C35 5, 45 10, 50 20 C52 25, 52 35, 50 40 C45 50, 35 55, 20 55 C10 55, 5 50, 5 40 L5 20 Z" fill="#663399"/>
+    <!-- Orange leaf/wing -->
+    <path d="M50 20 C55 10, 65 5, 80 5 C90 5, 95 10, 95 20 L95 40 C95 50, 90 55, 80 55 C65 55, 55 50, 50 40 C48 35, 48 25, 50 20 Z" fill="#FF9900"/>
+  </g>
+  <!-- Text -->
+  <text x="110" y="25" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#663399">EH Component Tracker</text>
+  <text x="110" y="40" font-family="Arial, sans-serif" font-size="10" font-weight="400" fill="#666666">Powered by EmblemHealth</text>
+  <text x="380" y="20" font-family="Arial, sans-serif" font-size="8" font-weight="400" fill="#663399">®</text>
+</svg>
