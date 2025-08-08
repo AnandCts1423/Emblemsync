@@ -157,7 +157,7 @@ const ViewAllPage: React.FC = () => {
   };
 
   // Complexity mapping function
-  const mapComplexity = (value: string): 'Simple' | 'Medium' | 'Complex' => {
+  const mapComplexity = useCallback((value: string): 'Simple' | 'Medium' | 'Complex' => {
     const normalized = value?.toLowerCase()?.trim();
     switch (normalized) {
       case 'low':
@@ -178,10 +178,10 @@ const ViewAllPage: React.FC = () => {
       default:
         return 'Medium';
     }
-  };
+  }, []);
 
   // Status mapping function
-  const mapStatus = (value: string): 'Released' | 'In Development' | 'Planned' => {
+  const mapStatus = useCallback((value: string): 'Released' | 'In Development' | 'Planned' => {
     const normalized = value?.toLowerCase()?.trim();
     switch (normalized) {
       case 'released':
@@ -208,10 +208,10 @@ const ViewAllPage: React.FC = () => {
       default:
         return 'Planned';
     }
-  };
+  }, []);
 
   // Upload file processing
-  const processUploadFile = async (file: File): Promise<UploadResults> => {
+  const processUploadFile = useCallback(async (file: File): Promise<UploadResults> => {
     return new Promise((resolve) => {
       const fileName = file.name;
       const fileType = file.name.split('.').pop()?.toLowerCase();
@@ -295,10 +295,10 @@ const ViewAllPage: React.FC = () => {
         resolve({ success: false, fileName, data: [], errors: ['Unsupported file type. Please upload CSV or JSON files.'] });
       }
     });
-  };
+  }, [mapComplexity, mapStatus]);
 
   // Handle file upload
-  const handleUpload = async (file: File) => {
+  const handleUpload = useCallback(async (file: File) => {
     setUploading(true);
     const results = await processUploadFile(file);
     setUploadResults(results);
@@ -325,7 +325,7 @@ const ViewAllPage: React.FC = () => {
     }
     
     setUploading(false);
-  };
+  }, [processUploadFile]);
 
   // Drag and drop handlers
   const handleDrag = useCallback((e: React.DragEvent) => {
@@ -347,7 +347,7 @@ const ViewAllPage: React.FC = () => {
     if (files.length > 0) {
       await handleUpload(files[0]);
     }
-  }, []);
+  }, [handleUpload]);
 
   const handleFileInput = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;

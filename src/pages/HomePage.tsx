@@ -128,16 +128,30 @@ const HomePage: React.FC = () => {
         <motion.h1
           className="gradient-text"
           style={{
-            fontSize: '4rem',
+            fontSize: '3.5rem',
             fontWeight: '700',
-            marginBottom: '24px'
+            marginBottom: '16px'
           }}
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
         >
-          EmblemSight
+          EmblemHealth
         </motion.h1>
+        
+        <motion.h2
+          style={{
+            fontSize: '1.8rem',
+            fontWeight: '500',
+            color: colors.primary,
+            marginBottom: '24px'
+          }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+        >
+          Component Portal
+        </motion.h2>
 
         <motion.p
           style={{
@@ -151,7 +165,7 @@ const HomePage: React.FC = () => {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
         >
-          Professional Release & Component Summary Portal for visualizing, managing, and analyzing software components with stunning animations and insights.
+          EmblemHealth's comprehensive component management system. Streamline your software architecture with powerful visualization tools, smart analytics, and seamless collaboration features designed for healthcare technology teams.
         </motion.p>
 
         <motion.div

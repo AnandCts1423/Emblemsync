@@ -12,11 +12,11 @@ import {
   Edit, 
   Settings, 
   Sun, 
-  Moon, 
-  Eye 
+  Moon 
 } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { Link, useLocation } from 'react-router-dom';
+import EmblemHealthLogo from '../EmblemHealthLogo';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -29,12 +29,12 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   const navigationItems = [
     { path: '/', icon: Home, label: 'Home' },
-    { path: '/upload', icon: Upload, label: 'Upload Data' },
+    { path: '/upload', icon: Upload, label: 'Upload Components' },
     { path: '/dashboard', icon: BarChart3, label: 'Dashboard' },
     { path: '/search', icon: Search, label: 'Smart Search' },
     { path: '/analytics', icon: TrendingUp, label: 'Analytics' },
-    { path: '/view-all', icon: Database, label: 'View All' },
-    { path: '/update', icon: Edit, label: 'Update/Add' },
+    { path: '/view-all', icon: Database, label: 'All Components' },
+    { path: '/update', icon: Edit, label: 'Manage Data' },
     { path: '/settings', icon: Settings, label: 'Settings' }
   ];
 
@@ -88,44 +88,16 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             <Link 
               to="/" 
               style={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                gap: '12px', 
                 textDecoration: 'none',
                 color: colors.text 
               }}
             >
               <motion.div
-                style={{
-                  background: colors.gradient,
-                  borderRadius: '12px',
-                  padding: '8px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}
-                whileHover={{ scale: 1.1, rotate: 5 }}
-                whileTap={{ scale: 0.9 }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
               >
-                <Eye size={24} color="white" />
+                <EmblemHealthLogo width={280} height={60} />
               </motion.div>
-              <div>
-                <h1>
-                  <span className="gradient-text" style={{
-                    fontSize: '1.5rem',
-                    fontWeight: '700'
-                  }}>
-                    EmblemSight
-                  </span>
-                </h1>
-                <p style={{ 
-                  fontSize: '12px', 
-                  color: colors.textSecondary, 
-                  margin: 0 
-                }}>
-                  Component Portal
-                </p>
-              </div>
             </Link>
           </div>
 

@@ -31,33 +31,33 @@ export const useTheme = () => {
 };
 
 const lightTheme = {
-  primary: '#3b82f6',
-  secondary: '#64748b',
+  primary: '#6B46C1',
+  secondary: '#F59E0B',
   background: '#ffffff',
   surface: '#f8fafc',
   text: '#1e293b',
   textSecondary: '#64748b',
   border: '#e2e8f0',
-  accent: '#8b5cf6',
+  accent: '#F59E0B',
   success: '#10b981',
-  warning: '#f59e0b',
+  warning: '#F59E0B',
   error: '#ef4444',
-  gradient: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)'
+  gradient: 'linear-gradient(135deg, #6B46C1 0%, #F59E0B 100%)'
 };
 
 const darkTheme = {
-  primary: '#60a5fa',
-  secondary: '#94a3b8',
+  primary: '#8B5CF6',
+  secondary: '#FCD34D',
   background: '#0f172a',
   surface: '#1e293b',
   text: '#f1f5f9',
   textSecondary: '#94a3b8',
   border: '#334155',
-  accent: '#a78bfa',
+  accent: '#FCD34D',
   success: '#34d399',
-  warning: '#fbbf24',
+  warning: '#FCD34D',
   error: '#f87171',
-  gradient: 'linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%)'
+  gradient: 'linear-gradient(135deg, #8B5CF6 0%, #FCD34D 100%)'
 };
 
 interface ThemeProviderProps {
