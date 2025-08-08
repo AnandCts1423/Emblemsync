@@ -1,22 +1,14 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Search, 
-  Filter, 
-  X, 
-  ChevronDown, 
-  Calendar, 
-  Building2, 
-  Layers,
-  Download,
-  Eye
-} from 'lucide-react';
+import { Search, Filter, Calendar, Clock, X, Tag, User, Database } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
-import { mockComponents } from '../data/mockComponents';
-import { Component, ComponentFilters } from '../types';
+import { useData } from '../context/DataContext';
+import { Component } from '../services/api';
+import { ComponentFilters } from '../types';
 
 const SearchPage: React.FC = () => {
   const { colors } = useTheme();
+  const { data } = useData();
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState<ComponentFilters>({

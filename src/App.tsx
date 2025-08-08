@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ThemeProvider } from './context/ThemeContext';
+import { DataProvider } from './context/DataContext';
 import Layout from './components/Layout/Layout';
 import HomePage from './pages/HomePage';
 import UploadPage from './pages/UploadPage';
@@ -16,7 +17,8 @@ import './styles/globals.css';
 const App: React.FC = () => {
   return (
     <ThemeProvider>
-      <Router>
+      <DataProvider>
+        <Router>
         <div className="gradient-bg" />
         <Layout>
           <AnimatePresence mode="wait">
@@ -39,7 +41,8 @@ const App: React.FC = () => {
             </motion.div>
           </AnimatePresence>
         </Layout>
-      </Router>
+        </Router>
+      </DataProvider>
     </ThemeProvider>
   );
 };

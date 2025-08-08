@@ -1,22 +1,42 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { Download } from 'lucide-react';
+import { BarChart3, PieChart, TrendingUp, Database, Users, CheckCircle, Clock, AlertCircle } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
-import { mockComponents } from '../data/mockComponents';
-import { Component, TowerSummary } from '../types';
+import { useData } from '../context/DataContext';
+import { apiService, AnalyticsData } from '../services/api';
+import { PieChart as RechartPieChart, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 const DashboardPage: React.FC = () => {
   const { colors } = useTheme();
+  const { components, loading } = useData();
+  const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(null);
 
-  // Process data for dashboard
-  const towerSummaries: TowerSummary[] = React.useMemo(() => {
-    const towerMap = new Map<string, { simple: number; medium: number; complex: number }>();
+  // Fetch analytics data
+  useEffect(() => {
+    const fetchAnalytics = async () => {
+      try {
+        const response = await apiService.getAnalytics();
+        if (response.success && response.data) {
+          setAnalyticsData(response.data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch analytics:', error);
+      }
+    };
     
-    mockComponents.forEach(component => {
+    fetchAnalytics();
+  }, []);
+
+  // Process component data for charts
+  const processedData = React.useMemo(() => {
+    if (!components.length || !analyticsData) return null;
+    
+    const towerMap = new Map<string, { total: number; released: number; inDevelopment: number; planned: number }>();
+    
+    components.forEach(component => {
       const tower = component.towerName;
       if (!towerMap.has(tower)) {
-        towerMap.set(tower, { simple: 0, medium: 0, complex: 0 });
+        towerMap.set(tower, { total: 0, released: 0, inDevelopment: 0, planned: 0 });
       }
       
       const summary = towerMap.get(tower)!;

@@ -1,27 +1,27 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Database, 
+  Search, 
+  Plus, 
   Download, 
-  ArrowUpDown, 
+  Upload, 
+  Edit, 
+  Trash2, 
+  Filter, 
+  ChevronDown, 
   Eye,
   ChevronLeft,
   ChevronRight,
   ChevronsLeft,
   ChevronsRight,
-  Upload,
-  Plus,
-  Edit,
-  Save,
-  X,
   FileSpreadsheet,
   FileCode,
   CheckCircle,
   AlertCircle
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
-import { mockComponents } from '../data/mockComponents';
-import { Component } from '../types';
+import { useData } from '../context/DataContext';
+import { Component } from '../services/api';
 import * as XLSX from 'xlsx';
 import Papa from 'papaparse';
 
@@ -46,6 +46,7 @@ interface UploadResults {
 
 const ViewAllPage: React.FC = () => {
   const { colors } = useTheme();
+  const { components, loading, error, refreshData, addComponent, updateComponent, deleteComponent, uploadFile, exportData } = useData();
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [sortField, setSortField] = useState<keyof Component>('updatedAt');
@@ -73,12 +74,11 @@ const ViewAllPage: React.FC = () => {
     description: ''
   });
   
-  // Local components state (for real-time updates)
-  const [localComponents, setLocalComponents] = useState<Component[]>(mockComponents);
+  // Use components from data context
 
   // Sorting logic
   const sortedComponents = useMemo(() => {
-    return [...localComponents].sort((a, b) => {
+    return [...components].sort((a, b) => {
       const aVal = a[sortField];
       const bVal = b[sortField];
       
@@ -94,7 +94,7 @@ const ViewAllPage: React.FC = () => {
       
       return 0;
     });
-  }, [localComponents, sortField, sortDirection]);
+  }, [components, sortField, sortDirection]);
 
   // Pagination logic
   const totalPages = Math.ceil(sortedComponents.length / itemsPerPage);
@@ -128,32 +128,12 @@ const ViewAllPage: React.FC = () => {
     }
   };
 
-  const exportSelected = () => {
-    const selectedComponents = localComponents.filter(c => selectedRows.has(c.id));
-    const csv = [
-      // Headers
-      ['ID', 'Tower', 'App Group', 'Component Type', 'Complexity', 'Status', 'Year', 'Month', 'Description'].join(','),
-      // Data
-      ...selectedComponents.map(c => [
-        c.id,
-        c.towerName,
-        c.appGroup,
-        c.componentType,
-        c.complexity,
-        c.status,
-        c.year,
-        c.month,
-        `"${c.description || ''}"`
-      ].join(','))
-    ].join('\n');
-
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `emblemsight-components-${new Date().toISOString().split('T')[0]}.csv`;
-    a.click();
-    window.URL.revokeObjectURL(url);
+  const exportSelected = async () => {
+    try {
+      await exportData();
+    } catch (error) {
+      console.error('Export failed:', error);
+    }
   };
 
   // Complexity mapping function
@@ -300,32 +280,37 @@ const ViewAllPage: React.FC = () => {
   // Handle file upload
   const handleUpload = useCallback(async (file: File) => {
     setUploading(true);
-    const results = await processUploadFile(file);
-    setUploadResults(results);
     
-    if (results.success && results.data.length > 0) {
-      // Add uploaded components to local state
-      const newComponents = results.data.map(item => ({
-        id: `upload-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        towerName: item.towerName,
-        appGroup: item.appGroup,
-        componentType: item.componentType,
-        complexity: item.complexity,
-        status: item.status,
-        year: item.year,
-        month: item.month,
-        changeType: item.changeType,
-        description: item.description || '',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      } as Component));
+    try {
+      const result = await uploadFile(file);
       
-      setLocalComponents(prev => [...newComponents, ...prev]);
-      setCurrentPage(1); // Reset to first page to show new data
+      if (result.success) {
+        setUploadResults({
+          success: true,
+          fileName: file.name,
+          data: [], // This will be refreshed from API
+          errors: result.stats?.errors || []
+        });
+        setCurrentPage(1); // Reset to first page to show new data
+      } else {
+        setUploadResults({
+          success: false,
+          fileName: file.name,
+          data: [],
+          errors: [result.message]
+        });
+      }
+    } catch (error) {
+      setUploadResults({
+        success: false,
+        fileName: file.name,
+        data: [],
+        errors: [error instanceof Error ? error.message : 'Upload failed']
+      });
     }
     
     setUploading(false);
-  }, [processUploadFile]);
+  }, [uploadFile]);
 
   // Drag and drop handlers
   const handleDrag = useCallback((e: React.DragEvent) => {
@@ -389,28 +374,60 @@ const ViewAllPage: React.FC = () => {
     setShowAddEdit(true);
   };
 
-  const saveComponent = () => {
-    if (editingComponent) {
-      // Update existing component
-      setLocalComponents(prev => prev.map(c => 
-        c.id === editingComponent.id 
-          ? { ...c, ...formData, updatedAt: new Date().toISOString() }
-          : c
-      ));
-    } else {
-      // Add new component
-      const newComponent: Component = {
-        id: `new-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        ...formData,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      };
-      setLocalComponents(prev => [newComponent, ...prev]);
-      setCurrentPage(1); // Reset to first page to show new data
+  const saveComponent = async () => {
+    try {
+      if (editingComponent) {
+        // Update existing component
+        const success = await updateComponent(editingComponent.id!, {
+          name: formData.componentType,
+          tower: formData.towerName,
+          complexity: formData.complexity,
+          status: formData.status,
+          description: formData.description,
+          releaseDate: `${formData.year}-${formData.month.toString().padStart(2, '0')}-01`
+        });
+        if (!success) {
+          console.error('Failed to update component');
+          return;
+        }
+      } else {
+        // Add new component
+        const success = await addComponent({
+          componentId: `COMP-${Date.now()}`,
+          name: formData.componentType,
+          version: '1.0.0',
+          description: formData.description,
+          tower: formData.towerName,
+          status: formData.status,
+          complexity: formData.complexity,
+          owner: 'Current User',
+          releaseDate: `${formData.year}-${formData.month.toString().padStart(2, '0')}-01`
+        });
+        if (!success) {
+          console.error('Failed to create component');
+          return;
+        }
+        setCurrentPage(1); // Reset to first page to show new data
+      }
+      
+      setShowAddEdit(false);
+      setEditingComponent(null);
+    } catch (error) {
+      console.error('Failed to save component:', error);
     }
-    
-    setShowAddEdit(false);
-    setEditingComponent(null);
+  };
+
+  const handleDeleteComponent = async (component: Component) => {
+    if (window.confirm('Are you sure you want to delete this component?')) {
+      try {
+        const success = await deleteComponent(component.id!);
+        if (!success) {
+          console.error('Failed to delete component');
+        }
+      } catch (error) {
+        console.error('Failed to delete component:', error);
+      }
+    }
   };
 
   const getComplexityColor = (complexity: Component['complexity']) => {
