@@ -9,18 +9,13 @@ interface ThemeContextType {
     secondary: string;
     background: string;
     surface: string;
-    surfaceElevated: string;
     text: string;
     textSecondary: string;
-    textTertiary: string;
     border: string;
-    borderFocus: string;
     accent: string;
     success: string;
     warning: string;
     error: string;
-    hoverPrimary: string;
-    hoverSecondary: string;
     gradient: string;
   };
 }
@@ -36,43 +31,33 @@ export const useTheme = () => {
 };
 
 const lightTheme = {
-  primary: '#522380',
-  secondary: '#EFAF2D',
-  background: '#FFFFFF',
-  surface: '#FEFEFF',
-  surfaceElevated: '#F8FAFC',
-  text: '#1E1B3A',
-  textSecondary: '#64748B',
-  textTertiary: '#94A3B8',
-  border: '#E5E7EB',
-  borderFocus: '#EFAF2D',
-  accent: '#6366F1',
-  success: '#059669',
-  warning: '#D97706',
-  error: '#DC2626',
-  hoverPrimary: '#6B4397',
-  hoverSecondary: '#F4C430',
-  gradient: 'linear-gradient(135deg, #522380 0%, #EFAF2D 100%)'
+  primary: '#3b82f6',
+  secondary: '#64748b',
+  background: '#ffffff',
+  surface: '#f8fafc',
+  text: '#1e293b',
+  textSecondary: '#64748b',
+  border: '#e2e8f0',
+  accent: '#8b5cf6',
+  success: '#10b981',
+  warning: '#f59e0b',
+  error: '#ef4444',
+  gradient: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)'
 };
 
 const darkTheme = {
-  primary: '#8B6FB8',
-  secondary: '#F4C430',
-  background: '#0F0E1A',
-  surface: '#1A1625',
-  surfaceElevated: '#2D2438',
-  text: '#F8FAFC',
-  textSecondary: '#CBD5E1',
-  textTertiary: '#94A3B8',
-  border: '#374151',
-  borderFocus: '#F4C430',
-  accent: '#A78BFA',
-  success: '#10B981',
-  warning: '#F59E0B',
-  error: '#F87171',
-  hoverPrimary: '#A084CC',
-  hoverSecondary: '#FFD85B',
-  gradient: 'linear-gradient(135deg, #8B6FB8 0%, #F4C430 100%)'
+  primary: '#60a5fa',
+  secondary: '#94a3b8',
+  background: '#0f172a',
+  surface: '#1e293b',
+  text: '#f1f5f9',
+  textSecondary: '#94a3b8',
+  border: '#334155',
+  accent: '#a78bfa',
+  success: '#34d399',
+  warning: '#fbbf24',
+  error: '#f87171',
+  gradient: 'linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%)'
 };
 
 interface ThemeProviderProps {
