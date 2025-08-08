@@ -128,7 +128,7 @@ const ViewAllPage: React.FC = () => {
     if (selectedRows.size === paginatedComponents.length) {
       setSelectedRows(new Set());
     } else {
-      setSelectedRows(new Set(paginatedComponents.map(c => c.id)));
+      setSelectedRows(new Set(paginatedComponents.map(c => String(c.id || ''))));
     }
   };
 
@@ -365,14 +365,14 @@ const ViewAllPage: React.FC = () => {
   const openEditComponent = (component: Component) => {
     setEditingComponent(component);
     setFormData({
-      towerName: component.towerName,
-      appGroup: component.appGroup,
-      componentType: component.componentType,
-      complexity: component.complexity,
-      status: component.status,
-      year: component.year,
-      month: component.month,
-      changeType: component.changeType,
+      towerName: (component as any).tower || '',
+      appGroup: (component as any).owner || '',
+      componentType: component.name || '',
+      complexity: component.complexity as any || 'Simple',
+      status: component.status as any || 'In Development',
+      year: component.releaseDate ? new Date(component.releaseDate).getFullYear() : new Date().getFullYear(),
+      month: component.releaseDate ? new Date(component.releaseDate).getMonth() + 1 : new Date().getMonth() + 1,
+      changeType: 'Update',
       description: component.description || ''
     });
     setShowAddEdit(true);
@@ -576,19 +576,19 @@ const ViewAllPage: React.FC = () => {
                   />
                 </th>
                 {[
-                  { key: 'towerName' as const, label: 'Tower' },
-                  { key: 'appGroup' as const, label: 'App Group' },
-                  { key: 'componentType' as const, label: 'Component' },
-                  { key: 'complexity' as const, label: 'Complexity' },
-                  { key: 'status' as const, label: 'Status' },
-                  { key: 'year' as const, label: 'Year' },
-                  { key: 'month' as const, label: 'Month' },
-                  { key: 'updatedAt' as const, label: 'Updated' }
+                  { key: 'tower', label: 'Tower' },
+                  { key: 'owner', label: 'Owner' },
+                  { key: 'name', label: 'Component' },
+                  { key: 'complexity', label: 'Complexity' },
+                  { key: 'status', label: 'Status' },
+                  { key: 'releaseDate', label: 'Year' },
+                  { key: 'releaseDate', label: 'Month' },
+                  { key: 'releaseDate', label: 'Updated' }
                 ].map((column) => (
                   <th 
-                    key={column.key}
+                    key={column.key + column.label}
                     style={{ cursor: 'pointer', userSelect: 'none' }}
-                    onClick={() => handleSort(column.key)}
+                    onClick={() => handleSort(column.key as keyof Component)}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                       {column.label}
@@ -610,19 +610,19 @@ const ViewAllPage: React.FC = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.05 }}
                   style={{
-                    backgroundColor: selectedRows.has(component.id) ? `${colors.primary}10` : 'transparent'
+                    backgroundColor: selectedRows.has(String(component.id || '')) ? `${colors.primary}10` : 'transparent'
                   }}
                 >
                   <td>
                     <input
                       type="checkbox"
-                      checked={selectedRows.has(component.id)}
-                      onChange={() => handleSelectRow(component.id)}
+                      checked={selectedRows.has(String(component.id || ''))}
+                      onChange={() => handleSelectRow(String(component.id || ''))}
                     />
                   </td>
-                  <td style={{ fontWeight: '600' }}>{component.towerName}</td>
-                  <td>{component.appGroup}</td>
-                  <td>{component.componentType}</td>
+                  <td style={{ fontWeight: '600' }}>{(component as any).tower || 'Unknown'}</td>
+                  <td>{(component as any).owner || 'Unassigned'}</td>
+                  <td>{component.name || 'Unknown Component'}</td>
                   <td>
                     <span style={{ 
                       padding: '4px 8px',
@@ -647,12 +647,12 @@ const ViewAllPage: React.FC = () => {
                       {component.status}
                     </span>
                   </td>
-                  <td>{component.year}</td>
+                  <td>{component.releaseDate ? new Date(component.releaseDate).getFullYear() : 'N/A'}</td>
                   <td>
-                    {new Date(0, component.month - 1).toLocaleString('default', { month: 'short' })}
+                    {component.releaseDate ? new Date(component.releaseDate).toLocaleString('default', { month: 'short' }) : 'N/A'}
                   </td>
                   <td style={{ fontSize: '12px', color: colors.textSecondary }}>
-                    {new Date(component.updatedAt).toLocaleDateString()}
+                    {component.releaseDate ? new Date(component.releaseDate).toLocaleDateString() : 'No Date'}
                   </td>
                   <td>
                     <div style={{ display: 'flex', gap: '4px' }}>
