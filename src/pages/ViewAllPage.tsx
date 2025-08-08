@@ -17,7 +17,11 @@ import {
   FileSpreadsheet,
   FileCode,
   CheckCircle,
-  AlertCircle
+  AlertCircle,
+  Database,
+  ArrowUpDown,
+  X,
+  Save
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { useData } from '../context/DataContext';

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { BarChart3, PieChart, TrendingUp, Database, Users, CheckCircle, Clock, AlertCircle } from 'lucide-react';
+import { BarChart3, PieChart, TrendingUp, Database, Users, CheckCircle, Clock, AlertCircle, Download } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { useData } from '../context/DataContext';
 import { apiService, AnalyticsData } from '../services/api';
-import { PieChart as RechartPieChart, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { PieChart as RechartPieChart, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Pie } from 'recharts';
 
 const DashboardPage: React.FC = () => {
   const { colors } = useTheme();

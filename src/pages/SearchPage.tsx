@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Filter, Calendar, Clock, X, Tag, User, Database } from 'lucide-react';
+import { Search, Filter, Calendar, Clock, X, Tag, User, Database, Download, Eye, Building2, Layers } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { useData } from '../context/DataContext';
 import { Component } from '../services/api';
@@ -8,7 +8,7 @@ import { ComponentFilters } from '../types';
 
 const SearchPage: React.FC = () => {
   const { colors } = useTheme();
-  const { data } = useData();
+  const { components, searchComponents } = useData();
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState<ComponentFilters>({
