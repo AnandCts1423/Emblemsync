@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { 
   Upload, 
   FileText, 
@@ -8,9 +9,12 @@ import {
   AlertCircle,
   X,
   FileSpreadsheet,
-  FileCode
+  FileCode,
+  Database,
+  Eye
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
+import { useData } from '../context/DataContext';
 import * as XLSX from 'xlsx';
 import Papa from 'papaparse';
 
@@ -35,9 +39,13 @@ interface UploadResults {
 
 const UploadPage: React.FC = () => {
   const { colors } = useTheme();
+  const { uploadFile, refreshData } = useData();
+  const navigate = useNavigate();
   const [dragActive, setDragActive] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [uploadResults, setUploadResults] = useState<UploadResults | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [notification, setNotification] = useState<{type: 'success' | 'error', message: string} | null>(null);
 
   const downloadTemplate = (format: 'csv' | 'json' = 'csv') => {
     // Create sample template data
@@ -397,8 +405,132 @@ const UploadPage: React.FC = () => {
     }
   };
 
+  // Save uploaded data to database
+  const saveToDatabase = async () => {
+    if (!uploadResults || !uploadResults.success) return;
+    
+    setSaving(true);
+    try {
+      // Convert uploaded data to backend format and use the uploadFile from DataContext
+      const file = new File([JSON.stringify(uploadResults.data)], 'upload.json', {
+        type: 'application/json'
+      });
+      
+      const result = await uploadFile(file);
+      
+      if (result.success) {
+        // Show success notification
+        setNotification({
+          type: 'success', 
+          message: `Successfully saved ${uploadResults.data.length} components to database!`
+        });
+        
+        // Refresh data context
+        await refreshData();
+        
+        // Redirect to ViewAll page after 2 seconds
+        setTimeout(() => {
+          navigate('/view-all');
+        }, 2000);
+      } else {
+        setNotification({
+          type: 'error',
+          message: 'Failed to save to database. Please try again.'
+        });
+      }
+    } catch (error) {
+      console.error('Save to database error:', error);
+      setNotification({
+        type: 'error',
+        message: 'Error saving to database. Please try again.'
+      });
+    }
+    setSaving(false);
+  };
+
+  // Export preview functionality
+  const exportPreview = () => {
+    if (!uploadResults || !uploadResults.success) return;
+    
+    const csvContent = [
+      'Tower,Owner,Component,Complexity,Status,Description',
+      ...uploadResults.data.map(component => 
+        `"${component.towerName}","${component.appGroup}","${component.componentType}",${component.complexity},${component.status},"${component.description || ''}"`
+      )
+    ].join('\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${uploadResults.fileName}_preview.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+    
+    setNotification({
+      type: 'success',
+      message: 'Preview exported successfully!'
+    });
+  };
+
   return (
     <div>
+      {/* Notification */}
+      <AnimatePresence>
+        {notification && (
+          <motion.div
+            initial={{ opacity: 0, y: -50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -50 }}
+            style={{
+              position: 'fixed',
+              top: '20px',
+              right: '20px',
+              zIndex: 1000,
+              padding: '16px 20px',
+              borderRadius: '8px',
+              backgroundColor: notification.type === 'success' ? colors.success : colors.error,
+              color: 'white',
+              fontSize: '14px',
+              fontWeight: '600',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              minWidth: '300px'
+            }}
+            onAnimationComplete={() => {
+              if (notification) {
+                setTimeout(() => setNotification(null), 3000);
+              }
+            }}
+          >
+            {notification.type === 'success' ? 
+              <CheckCircle size={18} /> : 
+              <AlertCircle size={18} />
+            }
+            {notification.message}
+            <button
+              onClick={() => setNotification(null)}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: 'white',
+                cursor: 'pointer',
+                marginLeft: 'auto',
+                padding: '0',
+                display: 'flex',
+                alignItems: 'center'
+              }}
+            >
+              <X size={16} />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: 30 }}
@@ -664,10 +796,22 @@ const UploadPage: React.FC = () => {
             {/* Actions */}
             {uploadResults.success && uploadResults.data.length > 0 && (
               <div style={{ display: 'flex', gap: '12px' }}>
-                <button className="btn btn-primary" style={{ flex: 1 }}>
-                  Save to Database
+                <button 
+                  className="btn btn-primary" 
+                  style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+                  onClick={saveToDatabase}
+                  disabled={saving}
+                >
+                  <Database size={18} />
+                  {saving ? 'Saving...' : 'Save to Database'}
                 </button>
-                <button className="btn btn-secondary">
+                <button 
+                  className="btn btn-secondary"
+                  style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+                  onClick={exportPreview}
+                  disabled={saving}
+                >
+                  <Eye size={18} />
                   Export Preview
                 </button>
               </div>
