@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { Link, useLocation } from 'react-router-dom';
-import EmblemHealthLogo from '../EmblemHealthLogo';
+import EHLogo from '../EmblemHealthLogo';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -29,12 +29,12 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   const navigationItems = [
     { path: '/', icon: Home, label: 'Home' },
-    { path: '/upload', icon: Upload, label: 'Upload Components' },
+    { path: '/upload', icon: Upload, label: 'Upload Data' },
     { path: '/dashboard', icon: BarChart3, label: 'Dashboard' },
-    { path: '/search', icon: Search, label: 'Smart Search' },
+    { path: '/search', icon: Search, label: 'Search & Filter' },
     { path: '/analytics', icon: TrendingUp, label: 'Analytics' },
     { path: '/view-all', icon: Database, label: 'All Components' },
-    { path: '/update', icon: Edit, label: 'Manage Data' },
+    { path: '/update', icon: Edit, label: 'Manage Components' },
     { path: '/settings', icon: Settings, label: 'Settings' }
   ];
 
@@ -96,7 +96,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <EmblemHealthLogo width={280} height={60} />
+                <EHLogo width={280} height={60} />
               </motion.div>
             </Link>
           </div>

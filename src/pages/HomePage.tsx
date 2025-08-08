@@ -136,21 +136,21 @@ const HomePage: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
         >
-          EmblemHealth
+          EH Component Tracker
         </motion.h1>
         
         <motion.h2
           style={{
-            fontSize: '1.8rem',
-            fontWeight: '500',
-            color: colors.primary,
+            fontSize: '1.4rem',
+            fontWeight: '400',
+            color: colors.textSecondary,
             marginBottom: '24px'
           }}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
         >
-          Component Portal
+          Powered by EmblemHealth
         </motion.h2>
 
         <motion.p

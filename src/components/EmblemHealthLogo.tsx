@@ -1,14 +1,14 @@
 import React from 'react';
 
-interface EmblemHealthLogoProps {
+interface EHLogoProps {
   width?: number;
   height?: number;
   className?: string;
 }
 
-const EmblemHealthLogo: React.FC<EmblemHealthLogoProps> = ({ 
-  width = 200, 
-  height = 50, 
+const EHLogo: React.FC<EHLogoProps> = ({ 
+  width = 280, 
+  height = 60, 
   className = '' 
 }) => {
   return (
@@ -20,52 +20,52 @@ const EmblemHealthLogo: React.FC<EmblemHealthLogoProps> = ({
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        {/* Logo Icon - Stylized leaf/emblem shape */}
+        {/* Accurate EmblemHealth Logo Recreation */}
         <g>
-          {/* Purple segment */}
+          {/* Left wing/leaf - Purple */}
           <path
-            d="M15 25 C15 15, 25 5, 40 5 C55 5, 65 15, 65 25 L65 50 C65 70, 50 85, 30 85 C20 85, 15 75, 15 65 L15 25 Z"
-            fill="#6B46C1"
+            d="M10 20 C10 10, 15 5, 25 5 C35 5, 50 10, 60 25 C65 35, 65 45, 60 55 C50 70, 35 75, 25 75 C15 75, 10 70, 10 60 L10 20 Z"
+            fill="#663399"
           />
-          {/* Orange segment */}
+          {/* Right wing/leaf - Orange */}
           <path
-            d="M65 25 C65 15, 75 5, 90 5 C105 5, 115 15, 115 25 L115 50 C115 70, 100 85, 80 85 C70 85, 65 75, 65 65 L65 25 Z"
-            fill="#F59E0B"
+            d="M60 25 C70 10, 85 5, 95 5 C105 5, 110 10, 110 20 L110 60 C110 70, 105 75, 95 75 C85 75, 70 70, 60 55 C55 45, 55 35, 60 25 Z"
+            fill="#FF9900"
           />
         </g>
         
-        {/* Text: EmblemHealth */}
+        {/* Text: EH Component Tracker */}
         <text
           x="140"
           y="35"
-          fontFamily="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
-          fontSize="32"
+          fontFamily="Arial, sans-serif"
+          fontSize="28"
           fontWeight="700"
-          fill="#6B46C1"
+          fill="#663399"
         >
-          EmblemHealth
+          EH Component Tracker
         </text>
         
-        {/* Subtitle: Component Portal */}
+        {/* Powered by EmblemHealth */}
         <text
           x="140"
           y="55"
-          fontFamily="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
-          fontSize="14"
+          fontFamily="Arial, sans-serif"
+          fontSize="12"
           fontWeight="400"
-          fill="#6B7280"
+          fill="#666666"
         >
-          Component Portal
+          Powered by EmblemHealth
         </text>
         
         {/* Registered trademark */}
         <text
-          x="370"
-          y="25"
-          fontFamily="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
-          fontSize="12"
+          x="385"
+          y="30"
+          fontFamily="Arial, sans-serif"
+          fontSize="10"
           fontWeight="400"
-          fill="#6B46C1"
+          fill="#663399"
         >
           ®
         </text>
@@ -74,4 +74,4 @@ const EmblemHealthLogo: React.FC<EmblemHealthLogoProps> = ({
   );
 };
 
-export default EmblemHealthLogo;
+export default EHLogo;
