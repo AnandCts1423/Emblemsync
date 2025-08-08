@@ -1,0 +1,358 @@
+import React, { useMemo } from 'react';
+import { motion } from 'framer-motion';
+import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { Download } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
+import { mockComponents } from '../data/mockComponents';
+import { Component, TowerSummary } from '../types';
+
+const DashboardPage: React.FC = () => {
+  const { colors } = useTheme();
+
+  // Process data for dashboard
+  const towerSummaries: TowerSummary[] = React.useMemo(() => {
+    const towerMap = new Map<string, { simple: number; medium: number; complex: number }>();
+    
+    mockComponents.forEach(component => {
+      const tower = component.towerName;
+      if (!towerMap.has(tower)) {
+        towerMap.set(tower, { simple: 0, medium: 0, complex: 0 });
+      }
+      
+      const summary = towerMap.get(tower)!;
+      summary[component.complexity.toLowerCase() as keyof typeof summary]++;
+    });
+
+    return Array.from(towerMap.entries()).map(([towerName, counts]) => ({
+      towerName,
+      ...counts,
+      total: counts.simple + counts.medium + counts.complex
+    }));
+  }, []);
+
+  const complexityData = React.useMemo(() => {
+    const counts = { Simple: 0, Medium: 0, Complex: 0 };
+    mockComponents.forEach(component => {
+      counts[component.complexity]++;
+    });
+    
+    return [
+      { name: 'Simple', value: counts.Simple, color: colors.success },
+      { name: 'Medium', value: counts.Medium, color: colors.warning },
+      { name: 'Complex', value: counts.Complex, color: colors.error }
+    ];
+  }, [colors]);
+
+  const releaseData = React.useMemo(() => {
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const releasesByMonth = new Map<number, number>();
+    
+    mockComponents.forEach(component => {
+      const count = releasesByMonth.get(component.month) || 0;
+      releasesByMonth.set(component.month, count + 1);
+    });
+
+    return months.map((month, index) => ({
+      name: month,
+      components: releasesByMonth.get(index + 1) || 0
+    }));
+  }, []);
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1 }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: { opacity: 1, y: 0 }
+  };
+
+  return (
+    <div>
+      {/* Header */}
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        style={{ marginBottom: '40px' }}
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
+          <div>
+            <h1 className="gradient-text" style={{ 
+              fontSize: '3rem', 
+              fontWeight: '700', 
+              marginBottom: '16px'
+            }}>
+              Component Dashboard
+            </h1>
+            <p style={{ 
+              fontSize: '1.2rem', 
+              color: colors.textSecondary 
+            }}>
+              Real-time insights into component distribution, complexity, and release patterns across all towers.
+            </p>
+          </div>
+          <button 
+            className="btn btn-secondary"
+            onClick={() => {
+              const dashboardData = {
+                summary: {
+                  totalComponents: mockComponents.length,
+                  totalTowers: towerSummaries.length,
+                  complexityBreakdown: complexityData,
+                  releaseTimeline: releaseData
+                },
+                towerSummaries,
+                exportDate: new Date().toISOString()
+              };
+              
+              const jsonContent = JSON.stringify(dashboardData, null, 2);
+              const blob = new Blob([jsonContent], { type: 'application/json' });
+              const url = window.URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = `emblemsight-dashboard-${new Date().toISOString().split('T')[0]}.json`;
+              a.click();
+              window.URL.revokeObjectURL(url);
+            }}
+            style={{ flexShrink: 0, marginTop: '8px' }}
+          >
+            <Download size={16} />
+            Export Data
+          </button>
+        </div>
+      </motion.div>
+
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}
+      >
+        {/* Summary Cards */}
+        <motion.div
+          variants={itemVariants}
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+            gap: '24px'
+          }}
+        >
+          {towerSummaries.map((tower, index) => (
+            <motion.div
+              key={tower.towerName}
+              className="card"
+              whileHover={{ y: -4 }}
+              style={{ position: 'relative' }}
+            >
+              <h3 style={{ 
+                fontSize: '1.2rem', 
+                fontWeight: '600', 
+                marginBottom: '16px',
+                color: colors.text
+              }}>
+                {tower.towerName}
+              </h3>
+              
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                <span style={{ fontSize: '2rem', fontWeight: '700' }}>{tower.total}</span>
+                <span style={{ fontSize: '14px', color: colors.textSecondary }}>Components</span>
+              </div>
+
+              <div style={{ display: 'flex', gap: '12px' }}>
+                <div style={{ flex: 1, textAlign: 'center' }}>
+                  <div style={{ fontSize: '1.2rem', fontWeight: '600', color: colors.success }}>
+                    {tower.simple}
+                  </div>
+                  <div style={{ fontSize: '12px', color: colors.textSecondary }}>Simple</div>
+                </div>
+                <div style={{ flex: 1, textAlign: 'center' }}>
+                  <div style={{ fontSize: '1.2rem', fontWeight: '600', color: colors.warning }}>
+                    {tower.medium}
+                  </div>
+                  <div style={{ fontSize: '12px', color: colors.textSecondary }}>Medium</div>
+                </div>
+                <div style={{ flex: 1, textAlign: 'center' }}>
+                  <div style={{ fontSize: '1.2rem', fontWeight: '600', color: colors.error }}>
+                    {tower.complex}
+                  </div>
+                  <div style={{ fontSize: '12px', color: colors.textSecondary }}>Complex</div>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
+
+        {/* Charts Section */}
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', 
+          gap: '32px' 
+        }}>
+          {/* Complexity Distribution */}
+          <motion.div variants={itemVariants} className="glass-container" style={{ padding: '32px' }}>
+            <h3 style={{ 
+              fontSize: '1.5rem', 
+              fontWeight: '600', 
+              marginBottom: '24px',
+              textAlign: 'center'
+            }}>
+              Complexity Distribution
+            </h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={complexityData}
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={100}
+                  innerRadius={50}
+                  dataKey="value"
+                  animationDuration={1000}
+                >
+                  {complexityData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip 
+                  contentStyle={{
+                    backgroundColor: colors.surface,
+                    border: `1px solid ${colors.border}`,
+                    borderRadius: '8px',
+                    color: colors.text
+                  }}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', marginTop: '16px' }}>
+              {complexityData.map((item, index) => (
+                <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <div style={{ 
+                    width: '12px', 
+                    height: '12px', 
+                    borderRadius: '50%', 
+                    backgroundColor: item.color 
+                  }} />
+                  <span style={{ fontSize: '14px', color: colors.textSecondary }}>
+                    {item.name} ({item.value})
+                  </span>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Release Timeline */}
+          <motion.div variants={itemVariants} className="glass-container" style={{ padding: '32px' }}>
+            <h3 style={{ 
+              fontSize: '1.5rem', 
+              fontWeight: '600', 
+              marginBottom: '24px',
+              textAlign: 'center'
+            }}>
+              Release Timeline
+            </h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={releaseData}>
+                <CartesianGrid strokeDasharray="3 3" stroke={colors.border} />
+                <XAxis 
+                  dataKey="name" 
+                  stroke={colors.textSecondary}
+                  fontSize={12}
+                />
+                <YAxis 
+                  stroke={colors.textSecondary}
+                  fontSize={12}
+                />
+                <Tooltip 
+                  contentStyle={{
+                    backgroundColor: colors.surface,
+                    border: `1px solid ${colors.border}`,
+                    borderRadius: '8px',
+                    color: colors.text
+                  }}
+                />
+                <Bar 
+                  dataKey="components" 
+                  fill={colors.primary}
+                  radius={[4, 4, 0, 0]}
+                  animationDuration={1000}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </motion.div>
+        </div>
+
+        {/* Tower Performance Chart */}
+        <motion.div variants={itemVariants} className="glass-container" style={{ padding: '32px' }}>
+          <h3 style={{ 
+            fontSize: '1.5rem', 
+            fontWeight: '600', 
+            marginBottom: '24px',
+            textAlign: 'center'
+          }}>
+            Tower Component Breakdown
+          </h3>
+          <ResponsiveContainer width="100%" height={400}>
+            <BarChart data={towerSummaries} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke={colors.border} />
+              <XAxis 
+                dataKey="towerName" 
+                stroke={colors.textSecondary}
+                fontSize={12}
+                angle={-45}
+                textAnchor="end"
+                height={100}
+              />
+              <YAxis stroke={colors.textSecondary} fontSize={12} />
+              <Tooltip 
+                contentStyle={{
+                  backgroundColor: colors.surface,
+                  border: `1px solid ${colors.border}`,
+                  borderRadius: '8px',
+                  color: colors.text
+                }}
+              />
+              <Bar dataKey="simple" stackId="a" fill={colors.success} radius={[0, 0, 0, 0]} />
+              <Bar dataKey="medium" stackId="a" fill={colors.warning} radius={[0, 0, 0, 0]} />
+              <Bar dataKey="complex" stackId="a" fill={colors.error} radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '24px', marginTop: '16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{ 
+                width: '12px', 
+                height: '12px', 
+                borderRadius: '2px', 
+                backgroundColor: colors.success 
+              }} />
+              <span style={{ fontSize: '14px', color: colors.textSecondary }}>Simple</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{ 
+                width: '12px', 
+                height: '12px', 
+                borderRadius: '2px', 
+                backgroundColor: colors.warning 
+              }} />
+              <span style={{ fontSize: '14px', color: colors.textSecondary }}>Medium</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{ 
+                width: '12px', 
+                height: '12px', 
+                borderRadius: '2px', 
+                backgroundColor: colors.error 
+              }} />
+              <span style={{ fontSize: '14px', color: colors.textSecondary }}>Complex</span>
+            </div>
+          </div>
+        </motion.div>
+      </motion.div>
+    </div>
+  );
+};
+
+export default DashboardPage;

@@ -1,0 +1,57 @@
+[
+  {
+    "towerName": "Digital Banking",
+    "appGroup": "Core Banking",
+    "componentType": "Frontend Module",
+    "complexity": "Medium",
+    "status": "Released",
+    "year": 2024,
+    "month": 12,
+    "changeType": "Enhancement",
+    "description": "Customer account management interface"
+  },
+  {
+    "towerName": "Payment Systems",
+    "appGroup": "Digital Wallet",
+    "componentType": "API Gateway",
+    "complexity": "Complex",
+    "status": "In Development",
+    "year": 2025,
+    "month": 1,
+    "changeType": "New Feature",
+    "description": "Real-time payment processing service"
+  },
+  {
+    "towerName": "Customer Experience",
+    "appGroup": "Mobile App",
+    "componentType": "UI Component",
+    "complexity": "Simple",
+    "status": "Planned",
+    "year": 2025,
+    "month": 2,
+    "changeType": "Bug Fix",
+    "description": "Navigation menu component"
+  },
+  {
+    "towerName": "Risk Management",
+    "appGroup": "Fraud Detection",
+    "componentType": "ML Model",
+    "complexity": "Complex",
+    "status": "Released",
+    "year": 2024,
+    "month": 11,
+    "changeType": "Enhancement",
+    "description": "Advanced fraud detection algorithm"
+  },
+  {
+    "towerName": "Data Analytics",
+    "appGroup": "Business Intelligence",
+    "componentType": "Dashboard",
+    "complexity": "Medium",
+    "status": "In Development",
+    "year": 2025,
+    "month": 1,
+    "changeType": "New Feature",
+    "description": "Executive dashboard with KPI metrics"
+  }
+]

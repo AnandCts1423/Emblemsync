@@ -1,0 +1,68 @@
+[
+  {
+    "towerName": "Digital Banking",
+    "appGroup": "Core Banking",
+    "componentType": "Frontend Module",
+    "complexity": "low",
+    "status": "live",
+    "year": 2024,
+    "month": 12,
+    "changeType": "Enhancement",
+    "description": "Customer account management interface with low complexity"
+  },
+  {
+    "towerName": "Payment Systems",
+    "appGroup": "Digital Wallet",
+    "componentType": "API Gateway",
+    "complexity": "high",
+    "status": "development",
+    "year": 2025,
+    "month": 1,
+    "changeType": "New Feature",
+    "description": "Real-time payment processing service with high complexity"
+  },
+  {
+    "towerName": "Customer Experience",
+    "appGroup": "Mobile App",
+    "componentType": "UI Component",
+    "complexity": "basic",
+    "status": "pending",
+    "year": 2025,
+    "month": 2,
+    "changeType": "Bug Fix",
+    "description": "Navigation menu component with basic complexity"
+  },
+  {
+    "towerName": "Risk Management",
+    "appGroup": "Fraud Detection",
+    "componentType": "ML Model",
+    "complexity": "advanced",
+    "status": "production",
+    "year": 2024,
+    "month": 11,
+    "changeType": "Enhancement",
+    "description": "Advanced fraud detection algorithm with advanced complexity"
+  },
+  {
+    "towerName": "Data Analytics",
+    "appGroup": "Business Intelligence",
+    "componentType": "Dashboard",
+    "complexity": "moderate",
+    "status": "active",
+    "year": 2025,
+    "month": 1,
+    "changeType": "New Feature",
+    "description": "Executive dashboard with moderate complexity"
+  },
+  {
+    "towerName": "Security",
+    "appGroup": "Authentication",
+    "componentType": "Service",
+    "complexity": "difficult",
+    "status": "scheduled",
+    "year": 2025,
+    "month": 3,
+    "changeType": "New Feature",
+    "description": "Multi-factor authentication service with difficult complexity"
+  }
+]
