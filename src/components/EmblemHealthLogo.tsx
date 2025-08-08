@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTheme } from '../context/ThemeContext';
 
 interface EHLogoProps {
   width?: number;
@@ -11,10 +12,17 @@ const EHLogo: React.FC<EHLogoProps> = ({
   height = 60, 
   className = '' 
 }) => {
+  const { theme } = useTheme();
+  
+  // Use different logo based on theme
+  const logoSrc = theme === 'dark' 
+    ? '/emblemhealth-logo-white.svg' 
+    : '/emblemhealth-logo.svg';
+  
   return (
     <div className={`flex items-center ${className}`}>
       <img 
-        src="/emblemhealth-logo.svg" 
+        src={logoSrc}
         alt="EH Component Tracker - Powered by EmblemHealth" 
         width={width}
         height={height}
