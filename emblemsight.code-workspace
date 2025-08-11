@@ -1,0 +1,29 @@
+{
+	"folders": [
+		{
+			"name": "🏥 EmblemHealth Tracker",
+			"path": "."
+		},
+		{
+			"name": "🎨 Frontend (React + TS)",
+			"path": "./frontend"
+		},
+		{
+			"name": "📊 Backend (Flask API)",
+			"path": "./backend"
+		}
+	],
+	"settings": {
+		"typescript.preferences.includePackageJsonAutoImports": "on",
+		"typescript.suggest.autoImports": true,
+		"typescript.preferences.importModuleSpecifier": "relative"
+	},
+	"extensions": {
+		"recommendations": [
+			"ms-python.python",
+			"bradlc.vscode-tailwindcss",
+			"esbenp.prettier-vscode",
+			"ms-vscode.vscode-typescript-next"
+		]
+	}
+}

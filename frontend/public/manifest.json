@@ -1,0 +1,16 @@
+{
+  "short_name": "EH Component Tracker",
+  "name": "EmblemHealth Component Tracker",
+  "icons": [
+    {
+      "src": "emblemhealth-logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#3b82f6",
+  "background_color": "#ffffff"
+}

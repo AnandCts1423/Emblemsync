@@ -68,15 +68,15 @@ venv\Scripts\activate
 # Install Python dependencies
 pip install -r requirements.txt
 
-# Start Flask server
+# Start Flask server with WebSocket support
 python app.py
 ```
-Backend will run on `http://localhost:5000`
+Backend will run on `http://localhost:5000` with WebSocket support
 
 ### 3. Frontend Setup
 ```bash
-# Navigate to frontend directory (from project root)
-cd .
+# Navigate to frontend directory
+cd frontend
 
 # Install Node dependencies
 npm install
@@ -84,7 +84,7 @@ npm install
 # Start React development server
 npm start
 ```
-Frontend will run on `http://localhost:3000`
+Frontend will run on `http://localhost:3000` with real-time features
 
 ### 4. Access Application
 Open `http://localhost:3000` in your browser to access the EmblemHealth Component Tracker.
@@ -93,36 +93,52 @@ Open `http://localhost:3000` in your browser to access the EmblemHealth Componen
 
 ```
 emblemsight/
-├── 📂 backend/                 # Python Flask API
-│   ├── app.py                  # Main Flask application
-│   ├── requirements.txt        # Python dependencies
-│   ├── start.bat              # Windows startup script
-│   └── README.md              # Backend documentation
-├── 📂 src/                    # React frontend source
-│   ├── 📂 components/         # Reusable UI components
-│   │   ├── Layout/            # Navigation and layout
-│   │   └── EmblemHealthLogo.tsx # Custom SVG logo
-│   ├── 📂 context/            # React contexts
-│   │   ├── ThemeContext.tsx   # Theme management
-│   │   └── DataContext.tsx    # Data state management
-│   ├── 📂 pages/              # Application pages
-│   │   ├── HomePage.tsx       # Landing page
-│   │   ├── DashboardPage.tsx  # Analytics dashboard
-│   │   ├── SearchPage.tsx     # Component search
-│   │   ├── ViewAllPage.tsx    # Data table with CRUD
-│   │   ├── UploadPage.tsx     # File upload
-│   │   └── SettingsPage.tsx   # User preferences
-│   ├── 📂 services/           # API integration
-│   │   └── api.ts             # Backend service calls
-│   ├── 📂 styles/             # CSS styling
-│   │   └── globals.css        # Global styles
-│   └── 📂 types/              # TypeScript definitions
-│       └── index.ts           # Type interfaces
-├── 📂 public/                 # Static assets
-│   ├── index.html
-│   └── favicon.ico
-├── package.json               # Node.js dependencies
-└── README.md                  # This file
+├── 📂 frontend/               # React 18 + TypeScript Frontend
+│   ├── 📂 src/               # React source code
+│   │   ├── 📂 components/    # Reusable UI components
+│   │   │   ├── Layout/       # Navigation and layout
+│   │   │   ├── RealTimeStatus.tsx # Live connection status
+│   │   │   ├── RealTimeActivityFeed.tsx # Live activity
+│   │   │   ├── LiveProgressIndicator.tsx # Upload progress
+│   │   │   └── EmblemHealthLogo.tsx # Custom SVG logo
+│   │   ├── 📂 context/       # React contexts
+│   │   │   ├── ThemeContext.tsx # Theme management
+│   │   │   ├── DataContext.tsx # Data state management
+│   │   │   └── WebSocketContext.tsx # Real-time communication
+│   │   ├── 📂 pages/         # Application pages (8 pages)
+│   │   │   ├── HomePage.tsx  # Landing page
+│   │   │   ├── DashboardPage.tsx # Analytics dashboard
+│   │   │   ├── SearchPage.tsx # Component search
+│   │   │   ├── ViewAllPage.tsx # Data table with CRUD
+│   │   │   ├── UploadPage.tsx # File upload with real-time
+│   │   │   ├── AnalyticsPage.tsx # Performance metrics
+│   │   │   ├── UpdatePage.tsx # Component forms
+│   │   │   └── SettingsPage.tsx # User preferences
+│   │   ├── 📂 services/      # API integration
+│   │   │   └── api.ts        # Backend service calls
+│   │   ├── 📂 styles/        # CSS styling
+│   │   │   └── globals.css   # Global glassmorphism styles
+│   │   ├── 📂 types/         # TypeScript definitions
+│   │   │   └── index.ts      # Type interfaces
+│   │   └── 📂 data/          # Development data
+│   │       └── mockComponents.ts # Sample data
+│   ├── 📂 public/            # Static assets
+│   │   ├── index.html        # HTML template
+│   │   ├── manifest.json     # PWA manifest
+│   │   └── *.svg            # EmblemHealth logos
+│   ├── package.json          # Node.js dependencies
+│   ├── tsconfig.json         # TypeScript configuration
+│   └── README.md            # Frontend documentation
+├── 📂 backend/               # Python Flask API + WebSocket
+│   ├── app.py               # Main Flask application (30KB+)
+│   ├── requirements.txt     # Python dependencies + SocketIO
+│   ├── start.bat           # Windows startup script
+│   ├── README.md           # Backend API documentation
+│   ├── instance/           # SQLite database files
+│   └── uploads/            # File upload directory
+├── README.md                # Main project documentation
+├── .gitignore              # Git ignore rules
+└── .git/                   # Git version control
 ```
 
 ## 🎨 Design System
